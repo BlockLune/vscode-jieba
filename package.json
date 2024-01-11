@@ -65,6 +65,10 @@
       {
         "command": "jieba.selectWord",
         "title": "Jieba: Select Word"
+      },
+      {
+        "command": "jieba.testFindNextWordHead",
+        "title": "Jieba: Test Find Next Word Head"
       }
     ]
   },

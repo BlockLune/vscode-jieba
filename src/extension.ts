@@ -6,8 +6,15 @@ import {
   killWord,
   selectWord,
 } from "./command";
+import { testFindNextWordHead } from "./vim_command";
 
 export function activate(context: vscode.ExtensionContext) {
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("jieba.testFindNextWordHead", testFindNextWordHead),
+  );
+
+
   context.subscriptions.push(
     vscode.commands.registerCommand("jieba.forwardWord", forwardWord),
   );
