@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { Token, parseSentence } from "./parse";
+import { text } from "stream/consumers";
 
 function parseText(text:string): Token[] {
   return parseSentence(text);
@@ -24,7 +25,24 @@ function getTextForSearchingForward(document: vscode.TextDocument, cursor: vscod
   return textForSearching;
 }
 
-function findNextWordHead(document: vscode.TextDocument, cursor: vscode.Position): number {
+function getLineOffset(textForSearching: string, start: number, end: number):number {
+  const matches = textForSearching.slice(start, end).match(/\n/g);
+  return matches ? matches.length : 0;
+}
+
+function getLastNewLinePosition(str: string): number {
+  return str.lastIndexOf("\n");
+}
+
+function getCharOffset(textForSearching: string, start: number, end: number): number {
+  return end - getLastNewLinePosition(textForSearching.slice(start, end)) - 1;
+}
+
+
+function findNextWordHead(document: vscode.TextDocument, cursor: vscode.Position): {
+  lineOffset: number,
+  charOffset: number,
+} {
   const textForSearching = getTextForSearchingForward(document, cursor);
   console.log(textForSearching);
 
@@ -36,24 +54,54 @@ function findNextWordHead(document: vscode.TextDocument, cursor: vscode.Position
   if (!isBlankText(cursorText)) {
     startIndex = 1;
   }
+  let tokenDistance = -1;
   for (let i = startIndex; i < tokens.length; ++i) {
-    const token = tokens[i];
-    if (!isBlankText(token.word)) {
-      return token.start;
+    if (!isBlankText(tokens[i].word)) {
+      tokenDistance =  tokens[i].start - 1; // minus 1 to be distance
+      break;
     }
   }
-  return -1; // if not found
+
+  if (tokenDistance === -1) {
+    return {
+      lineOffset: 0,
+      charOffset: 0,
+    };
+  }
+
+  const lineOffset = getLineOffset(textForSearching, 0, tokenDistance + 1);
+  const charOffset = getCharOffset(textForSearching, 0, tokenDistance + 1);
+  return {lineOffset, charOffset};
 }
 
 export function testFindNextWordHead() {
+  const editor = vscode.window.activeTextEditor;
+  if (editor === undefined) {
+    return;
+  }
+
   const document = vscode.window.activeTextEditor!.document;
   const cursor = vscode.window.activeTextEditor!.selection.active;
+  console.log("cursor: " + cursor);
+
   const oldSelections = vscode.window.activeTextEditor!.selections;
+  const newSelections: vscode.Selection[] = [];
 
-  console.log(cursor);
-  const nextWordHead = findNextWordHead(document, cursor);
-  console.log(nextWordHead);
+  const {lineOffset, charOffset} = findNextWordHead(document, cursor);
+  console.log("lineOffset: " + lineOffset);
+  console.log("charOffset: " + charOffset);
 
-  for (const selection of oldSelections) {
+  for (const oldSelection of oldSelections) {
+    const oldCursorPosition = oldSelection.start;
+    console.log("oldCursorPosition: " + oldCursorPosition);
+    const newCursorPosition = new vscode.Position(
+      oldCursorPosition.line + lineOffset,
+      (lineOffset > 0) ? charOffset : oldCursorPosition.character + charOffset
+    );
+    console.log("newCursorPosition: " + newCursorPosition);
+    const newSelection = new vscode.Selection(newCursorPosition, newCursorPosition);
+    newSelections.push(newSelection);
   }
+
+  editor.selections = newSelections;
 }
