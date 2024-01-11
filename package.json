@@ -7,12 +7,12 @@
     "vscode": "^1.85.1"
   },
   "publisher": "StephanosKomnenos",
-  "homepage": "https://github.com/blocklune/vscode-jieba",
+  "homepage": "https://github.com/stephanoskomnenos/vscode-jieba",
   "repository": {
     "type": "git",
-    "url": "https://github.com/blocklune/vscode-jieba"
+    "url": "https://github.com/stephanoskomnenos/vscode-jieba"
   },
-  "icon": "jieba.png",
+  "icon": "./img/jieba.png",
   "license": "MIT",
   "keywords": [
     "Chinese",
