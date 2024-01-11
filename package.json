@@ -67,8 +67,12 @@
         "title": "Jieba: Select Word"
       },
       {
-        "command": "jieba.testFindNextWordHead",
-        "title": "Jieba: Test Find Next Word Head"
+        "command": "jieba.vimLikeLowerW",
+        "title": "Jieba: Vim-like w (Behaves not exactly like w in Vim)"
+      },
+      {
+        "command": "jieba.vimLowerE",
+        "title": "Jieba: Vim e"
       }
     ]
   },

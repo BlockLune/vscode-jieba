@@ -6,32 +6,20 @@ import {
   killWord,
   selectWord,
 } from "./command";
-import { testFindNextWordHead } from "./vim_command";
+import { vimLikeLowerW } from "./vim_command_w";
+import { vimLowerE } from "./vim_command_e";
 
 export function activate(context: vscode.ExtensionContext) {
-
   context.subscriptions.push(
-    vscode.commands.registerCommand("jieba.testFindNextWordHead", testFindNextWordHead),
+    vscode.commands.registerCommand("jieba.vimLikeLowerW", vimLikeLowerW),
+    vscode.commands.registerCommand("jieba.vimLowerE", vimLowerE),
   );
-
 
   context.subscriptions.push(
     vscode.commands.registerCommand("jieba.forwardWord", forwardWord),
-  );
-
-  context.subscriptions.push(
     vscode.commands.registerCommand("jieba.backwardWord", backwardWord),
-  );
-
-  context.subscriptions.push(
     vscode.commands.registerCommand("jieba.killWord", killWord),
-  );
-
-  context.subscriptions.push(
     vscode.commands.registerCommand("jieba.backwardKillWord", backwardKillWord),
-  );
-
-  context.subscriptions.push(
     vscode.commands.registerCommand("jieba.selectWord", selectWord),
   );
 }
